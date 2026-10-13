@@ -28,7 +28,8 @@ class AIAssistantTicketAnalyzer {
                 $api_url,
                 (int) $config->get('timeout', 30),
                 (bool) $config->get('enable_logging', false),
-                (float) $temperature
+                (float) $temperature,
+                (string) $config->get('reasoning_effort', 'none')
             );
         }
     }

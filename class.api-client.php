@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__ . '/class.model-capabilities.php');
+
 /**
  * AI API Client
  * Handles communication with OpenAI-compatible API
@@ -11,15 +13,17 @@ class AIAssistantAPIClient {
     private bool $enable_logging;
     private string $model;
     private float $temperature;
+    private string $reasoning_effort;
     private int $timeout;
     
-    public function __construct(string $api_key, string $model, string $api_url, int $timeout, bool $enable_logging, float $temperature) {
+    public function __construct(string $api_key, string $model, string $api_url, int $timeout, bool $enable_logging, float $temperature, string $reasoning_effort = 'none') {
         $this->api_key = trim($api_key);
         $this->model = $model;
         $this->api_url = $api_url;
         $this->timeout = $timeout;
         $this->enable_logging = $enable_logging;
         $this->temperature = $temperature;
+        $this->reasoning_effort = $reasoning_effort;
     }
     
     /**
@@ -115,9 +119,16 @@ class AIAssistantAPIClient {
         $data = array(
             'model' => $this->model,
             'messages' => $messages,
-            'temperature' => $this->temperature,
             'response_format' => array('type' => 'json_object')
         );
+        // Sampling parameters depend on the model and reasoning effort.
+        $effort = AIAssistantModelCapabilities::reasoningEffort($this->model, $this->reasoning_effort);
+        if ($effort !== null) {
+            $data['reasoning_effort'] = $effort;
+        }
+        if (AIAssistantModelCapabilities::supportsTemperature($this->model, $effort)) {
+            $data['temperature'] = $this->temperature;
+        }
         
         // Encode payload as JSON, handling invalid UTF-8 safely
         $json_options = JSON_UNESCAPED_UNICODE;
