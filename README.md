@@ -46,32 +46,19 @@ Go to **Manage -> Plugins -> AI Assistant -> Config**.
 
 The plugin supports a wide range of OpenAI models. You can select from the dropdown or enter a custom model name for OpenAI-compatible APIs.
 
-**GPT-6 Series**
 | Model | Description |
 |-------|-------------|
 | `gpt-6.1-sol` | Latest GPT-6.1 variant; supports reasoning (no “None” effort) |
 | `gpt-6-astra` | GPT-6 general model; supports reasoning |
 | `gpt-6-sol` | GPT-6 balanced model; supports reasoning |
 | `gpt-6-luna` | GPT-6 fast model; recommended default |
-
-**GPT-5.6 Series**
-| Model | Description |
-|-------|-------------|
 | `gpt-5.6-sol` | Balanced GPT-5.6 model |
 | `gpt-5.6-terra` | GPT-5.6 variant tuned for broader tasks |
 | `gpt-5.6-luna` | Fast GPT-5.6 model |
-
-**GPT-5.4 / GPT-5.5**
-| Model | Description |
-|-------|-------------|
 | `gpt-5.5` | GPT-5.5 flagship |
 | `gpt-5.4` | GPT-5.4 flagship |
 | `gpt-5.4-mini` | Balanced performance and cost |
 | `gpt-5.4-nano` | Fastest in the GPT-5.4 family |
-
-**GPT-5 Series**
-| Model | Description |
-|-------|-------------|
 | `gpt-5.2` | Improved reasoning and speed |
 | `gpt-5.1` | Optimized for coding and agentic tasks |
 | `gpt-5.1-codex` | Specialized for code generation (Responses API only — not selectable for ticket analysis) |
@@ -79,34 +66,18 @@ The plugin supports a wide range of OpenAI models. You can select from the dropd
 | `gpt-5.1-codex-max` | Project-scale coding (Responses API only) |
 | `gpt-5-mini` | Fast and cost-efficient |
 | `gpt-5-nano` | Fastest and cheapest in the GPT-5 family |
-
-**Reasoning Models (o-series)**
-| Model | Description |
-|-------|-------------|
+| `gpt-4.1` | Best for coding, supports 1M token context |
+| `gpt-4.1-mini` | Balanced performance and cost |
+| `gpt-4.1-nano` | Fastest in GPT-4.1 family |
+| `gpt-4o` | Multimodal, highly capable |
+| `gpt-4o-mini` | Fast and affordable |
+| `gpt-4-turbo` | Previous generation |
+| `gpt-3.5-turbo` | Cheapest option |
 | `o3` | Most advanced reasoning capabilities |
 | `o3-mini` | Cost-efficient reasoning |
 | `o4-mini` | Latest compact reasoning model |
 | `o1` | Extended reasoning |
 | `o1-mini` | Compact reasoning |
-
-**GPT-4.1 Series**
-| Model | Description |
-|-------|-------------|
-| `gpt-4.1` | Best for coding, supports 1M token context |
-| `gpt-4.1-mini` | Balanced performance and cost |
-| `gpt-4.1-nano` | Fastest in GPT-4.1 family |
-
-**GPT-4o Series (Multimodal)**
-| Model | Description |
-|-------|-------------|
-| `gpt-4o` | Multimodal, highly capable |
-| `gpt-4o-mini` | Fast and affordable |
-
-**Legacy Models**
-| Model | Description |
-|-------|-------------|
-| `gpt-4-turbo` | Previous generation |
-| `gpt-3.5-turbo` | Cheapest option |
 
 **Reasoning effort by model family** (when supported): GPT-6 Sol/Luna and GPT-5.6 — None through Maximum; GPT-6.1 Sol and GPT-6 Astra — Low through Maximum; GPT-5.2 / GPT-5.4 / GPT-5.5 — None through Extra High; GPT-5.1 — None through High; GPT-5 Mini/Nano — Minimal through High; o-series — Low through High.
 
