@@ -13,7 +13,7 @@ The AI Assistant plugin integrates OpenAI's GPT models into osTicket to assist s
 - **Context Aware**: Considers ticket priority and department.
 - **Language-Aware**: Detects the ticket language and prefers canned responses written in the same language (for example, distinguishing Russian and Ukrainian).
 - **One-Click Insertion**: Agents can preview the suggested response and insert it into the reply editor with a single click.
-- **Configurable**: Adjustable confidence threshold, max templates limit, and model selection (GPT-5.x, GPT-4.x, o-series reasoning models, etc.).
+- **Configurable**: Adjustable confidence threshold, max templates limit, model selection (GPT-6.x, GPT-5.x, GPT-4.x, o-series, etc.), and reasoning effort for supported models.
 
 ## Installation
 
@@ -33,7 +33,8 @@ Go to **Manage -> Plugins -> AI Assistant -> Config**.
 - **API Provider**: Choose between OpenAI or Custom (for OpenAI-compatible APIs).
 - **API Key**: Your secret key starting with `sk-...` (required).
 - **API URL**: Custom endpoint URL (required for Custom provider, auto-filled for OpenAI).
-- **Model**: Select the model from the dropdown or enter a custom model name.
+- **Model**: Select the model from the dropdown or enter a custom model name (default: `gpt-6-luna`).
+- **Reasoning Effort**: For models that support extended reasoning, choose a level from None through Maximum. Available options depend on the selected model; unsupported models hide this setting.
 - **Auto-suggest**: If enabled, analysis starts automatically when viewing a ticket.
 - **Minimum Confidence Score**: Threshold (0-100) to filter weak suggestions.
 - **Max Templates**: How many canned responses to send to AI for comparison (affects token usage).
@@ -45,16 +46,39 @@ Go to **Manage -> Plugins -> AI Assistant -> Config**.
 
 The plugin supports a wide range of OpenAI models. You can select from the dropdown or enter a custom model name for OpenAI-compatible APIs.
 
-**GPT-5 Series (Latest)**
+**GPT-6 Series**
 | Model | Description |
 |-------|-------------|
-| `gpt-5.2` | Latest model (Dec 2025), improved reasoning and speed |
+| `gpt-6.1-sol` | Latest GPT-6.1 variant; supports reasoning (no “None” effort) |
+| `gpt-6-astra` | GPT-6 general model; supports reasoning |
+| `gpt-6-sol` | GPT-6 balanced model; supports reasoning |
+| `gpt-6-luna` | GPT-6 fast model; recommended default |
+
+**GPT-5.6 Series**
+| Model | Description |
+|-------|-------------|
+| `gpt-5.6-sol` | Balanced GPT-5.6 model |
+| `gpt-5.6-terra` | GPT-5.6 variant tuned for broader tasks |
+| `gpt-5.6-luna` | Fast GPT-5.6 model |
+
+**GPT-5.4 / GPT-5.5**
+| Model | Description |
+|-------|-------------|
+| `gpt-5.5` | GPT-5.5 flagship |
+| `gpt-5.4` | GPT-5.4 flagship |
+| `gpt-5.4-mini` | Balanced performance and cost |
+| `gpt-5.4-nano` | Fastest in the GPT-5.4 family |
+
+**GPT-5 Series**
+| Model | Description |
+|-------|-------------|
+| `gpt-5.2` | Improved reasoning and speed |
 | `gpt-5.1` | Optimized for coding and agentic tasks |
-| `gpt-5.1-codex` | Specialized for code generation |
-| `gpt-5.1-codex-mini` | Compact version for coding |
-| `gpt-5.1-codex-max` | Project-scale coding tasks |
-| `gpt-5-mini` | Fast and cost-efficient, 400K context window |
-| `gpt-5-nano` | Fastest and cheapest in GPT-5 family |
+| `gpt-5.1-codex` | Specialized for code generation (Responses API only — not selectable for ticket analysis) |
+| `gpt-5.1-codex-mini` | Compact coding model (Responses API only) |
+| `gpt-5.1-codex-max` | Project-scale coding (Responses API only) |
+| `gpt-5-mini` | Fast and cost-efficient |
+| `gpt-5-nano` | Fastest and cheapest in the GPT-5 family |
 
 **Reasoning Models (o-series)**
 | Model | Description |
@@ -76,7 +100,7 @@ The plugin supports a wide range of OpenAI models. You can select from the dropd
 | Model | Description |
 |-------|-------------|
 | `gpt-4o` | Multimodal, highly capable |
-| `gpt-4o-mini` | Fast and affordable (recommended default) |
+| `gpt-4o-mini` | Fast and affordable |
 
 **Legacy Models**
 | Model | Description |
@@ -84,14 +108,17 @@ The plugin supports a wide range of OpenAI models. You can select from the dropd
 | `gpt-4-turbo` | Previous generation |
 | `gpt-3.5-turbo` | Cheapest option |
 
-> **Note**: If API Key, Model, or API URL is not configured, the plugin will return an error when attempting to analyze tickets.
+**Reasoning effort by model family** (when supported): GPT-6 Sol/Luna and GPT-5.6 — None through Maximum; GPT-6.1 Sol and GPT-6 Astra — Low through Maximum; GPT-5.2 / GPT-5.4 / GPT-5.5 — None through Extra High; GPT-5.1 — None through High; GPT-5 Mini/Nano — Minimal through High; o-series — Low through High.
+
+> **Note**: If API Key, Model, or API URL is not configured, the plugin will return an error when attempting to analyze tickets. Codex models in the dropdown are disabled because they require the Responses API; this plugin uses Chat Completions.
 
 ## Architecture
 
 ### Files
 - `plugin.php`: Entry point and metadata.
 - `ai-assistant.php`: Main plugin class (`AiAssistantPlugin`). Handles hooks, asset injection, and AJAX routing.
-- `config.php`: Configuration form definition (`AiAssistantConfig`). Contains model selection widget.
+- `config.php`: Configuration form definition (`AiAssistantConfig`). Model selection and reasoning effort UI.
+- `class.model-capabilities.php`: Model catalog, reasoning-effort rules, and API capability helpers.
 - `class.analyzer.php`: Core logic (`AIAssistantTicketAnalyzer`). Orchestrates data gathering and AI analysis.
 - `class.api-client.php`: API client (`AIAssistantAPIClient`). Handles communication with OpenAI-compatible APIs.
 - `js/ai-assistant.js`: Frontend logic. Injects button, handles clicks, displays modal.
