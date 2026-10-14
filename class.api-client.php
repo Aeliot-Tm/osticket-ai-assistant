@@ -1,22 +1,29 @@
 <?php
 
+require_once(__DIR__ . '/class.model-capabilities.php');
+
 /**
- * OpenAI API Client
- * Handles communication with OpenAI ChatGPT API
+ * AI API Client
+ * Handles communication with OpenAI-compatible API
  */
-class OpenAIClient {
+class AIAssistantAPIClient {
     
-    private ?string $api_key;
-    private ?string $model;
-    private ?int $timeout;
-    private string $api_url = 'https://api.openai.com/v1/chat/completions';
-    private ?bool $enable_logging;
+    private string $api_key;
+    private string $api_url;
+    private bool $enable_logging;
+    private string $model;
+    private float $temperature;
+    private string $reasoning_effort;
+    private int $timeout;
     
-    public function __construct(?string $api_key, ?string $model = 'gpt-4o-mini', ?int $timeout = 30, ?bool $enable_logging = false) {
+    public function __construct(string $api_key, string $model, string $api_url, int $timeout, bool $enable_logging, float $temperature, string $reasoning_effort = 'none') {
         $this->api_key = trim($api_key);
         $this->model = $model;
+        $this->api_url = $api_url;
         $this->timeout = $timeout;
         $this->enable_logging = $enable_logging;
+        $this->temperature = $temperature;
+        $this->reasoning_effort = $reasoning_effort;
     }
     
     /**
@@ -106,15 +113,22 @@ class OpenAIClient {
     }
     
     /**
-     * Make HTTP request to OpenAI API
+     * Make HTTP request to AI API
      */
     private function makeRequest($messages) {
         $data = array(
             'model' => $this->model,
             'messages' => $messages,
-            'temperature' => 0.3,
             'response_format' => array('type' => 'json_object')
         );
+        // Sampling parameters depend on the model and reasoning effort.
+        $effort = AIAssistantModelCapabilities::reasoningEffort($this->model, $this->reasoning_effort);
+        if ($effort !== null) {
+            $data['reasoning_effort'] = $effort;
+        }
+        if (AIAssistantModelCapabilities::supportsTemperature($this->model, $effort)) {
+            $data['temperature'] = $this->temperature;
+        }
         
         // Encode payload as JSON, handling invalid UTF-8 safely
         $json_options = JSON_UNESCAPED_UNICODE;
