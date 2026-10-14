@@ -1,9 +1,9 @@
-# AI Assistant Plugin for osTicket
+# AI Answer Template Assistant Plugin for osTicket
 
 ## Overview
 The AI Assistant plugin integrates OpenAI's GPT models into osTicket to assist support agents. It analyzes incoming ticket content and suggests the most appropriate "Canned Response" from the system's database, significantly reducing response time.
 
-![AI Assistant in Action](docs/images/ostickets.png)
+![AI Answer Template Assistant in Action](docs/images/ostickets.png)
 
 *Screenshot showing the AI Assistant suggesting a response template with 70% confidence for a customer ticket.*
 
